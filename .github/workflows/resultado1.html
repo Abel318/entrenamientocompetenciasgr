@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario de Competencias</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #DFF0D8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        select, button {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        .options button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Cuestionario de Competencias</h1>
+    <div>
+        <label for="ocupacion">Ocupación:</label>
+        <select id="ocupacion">
+            <option value="camarero">Camarero</option>
+            <option value="peón">Peón Agrícola</option>
+            <option value="vendedor">Vendedor</option>
+        </select>
+
+        <label for="nivel">Nivel:</label>
+        <select id="nivel">
+            <option value="básico">Básico</option>
+            <option value="intermedio">Intermedio</option>
+            <option value="avanzado">Avanzado</option>
+        </select>
+
+        <button onclick="iniciarCuestionario()">Iniciar Cuestionario</button>
+    </div>
+
+    <div id="question-container" style="display:none;">
+        <div id="question-text" class="question"></div>
+        <div id="options-container" class="options"></div>
+    </div>
+
+    <div id="resultado" style="display:none;">
+        <h2>Resultado</h2>
+        <p id="puntaje"></p>
+    </div>
+</div>
+
+<script>
+    let preguntas = {
+        "camarero": {
+            "básico": [
+                { question: "¿Qué utensilio es necesario para servir vino?", options: ["Pinzas", "Sacacorchos", "Cuchara"], correct: 1 },
+                { question: "¿Cuál es la temperatura para servir vino tinto?", options: ["Ambiente", "Helada", "Fría"], correct: 0 }
+            ],
+            "intermedio": [
+                { question: "¿Cuánto vino se sirve por copa?", options: ["50 ml", "120 ml", "200 ml"], correct: 1 }
+            ]
+        }
+    };
+
+    let currentQuestion = 0;
+    let score = 0;
+    let selectedOccupation = "camarero";
+    let selectedLevel = "básico";
+
+    function iniciarCuestionario() {
+        selectedOccupation = document.getElementById("ocupacion").value;
+        selectedLevel = document.getElementById("nivel").value;
+
+        const selectedQuestions = preguntas[selectedOccupation][selectedLevel];
+
+        if (selectedQuestions && selectedQuestions.length > 0) {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById("question-container").style.display = "block";
+            document.getElementById("resultado").style.display = "none";
+            mostrarPregunta(selectedQuestions);
+        }
+    }
+
+    function mostrarPregunta(selectedQuestions) {
+        if (currentQuestion < selectedQuestions.length) {
+            const question = selectedQuestions[currentQuestion];
+            document.getElementById("question-text").innerText = question.question;
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.innerText = option;
+                button.onclick = () => verificarRespuesta(index, question.correct, selectedQuestions);
+                optionsContainer.appendChild(button);
+            });
+        } else {
+            mostrarResultado();
+        }
+    }
+
+    function verificarRespuesta(selectedOption, correctOption, selectedQuestions) {
+        if (selectedOption === correctOption) {
+            score += 20;
+        }
+        currentQuestion++;
+        mostrarPregunta(selectedQuestions);
+    }
+
+    function mostrarResultado() {
+        document.getElementById("question-container").style.display = "none";
+        document.getElementById("resultado").style.display = "block";
+        document.getElementById("puntaje").innerText = `Tu puntaje es: ${score}`;
+    }
+</script>
+
+</body>
+</html>
